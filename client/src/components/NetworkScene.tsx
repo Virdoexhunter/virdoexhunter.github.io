@@ -38,41 +38,59 @@ const CONNECTIONS = NODES.slice(1).map(node => ({
   color: node.color
 }));
 
-function Character({ position, targetPosition }: { position: THREE.Vector3, targetPosition: THREE.Vector3 }) {
+function Character({ targetPosition }: { targetPosition: THREE.Vector3 }) {
   const group = useRef<THREE.Group>(null);
   
-  // Using a generic robot/anime character placeholder model from a reliable CDN
-  const { scene, animations } = useGLTF("https://vazxmixjsiawhamofees.supabase.co/storage/v1/object/public/models/robot-parts-variation/model.gltf");
-  const { actions } = useAnimations(animations, group);
-
-  useEffect(() => {
-    if (actions && actions["Walking"]) {
-      actions["Walking"].play();
-    }
-  }, [actions]);
-
-  useFrame((state, delta) => {
+  useFrame((state) => {
     if (group.current) {
-      // Smoothly move towards target position
       group.current.position.lerp(targetPosition, 0.05);
       
-      // Look at the target
       const lookTarget = targetPosition.clone();
       lookTarget.y = group.current.position.y;
       group.current.lookAt(lookTarget);
       
-      // Floating animation
-      group.current.position.y += Math.sin(state.clock.getElapsedTime() * 2) * 0.005;
+      group.current.position.y = -1.5 + Math.sin(state.clock.getElapsedTime() * 2) * 0.1;
     }
   });
 
   return (
-    <primitive 
-      ref={group}
-      object={scene} 
-      position={position} 
-      scale={[0.4, 0.4, 0.4]} 
-    />
+    <group ref={group}>
+      <group scale={[0.5, 0.5, 0.5]}>
+        {/* Head */}
+        <mesh position={[0, 2.5, 0]}>
+          <boxGeometry args={[1, 1, 1]} />
+          <meshStandardMaterial color="#00ffff" emissive="#00ffff" emissiveIntensity={1} wireframe />
+        </mesh>
+        {/* Eyes */}
+        <mesh position={[0.2, 2.6, 0.5]}>
+          <sphereGeometry args={[0.1, 8, 8]} />
+          <meshBasicMaterial color="#ffffff" />
+        </mesh>
+        <mesh position={[-0.2, 2.6, 0.5]}>
+          <sphereGeometry args={[0.1, 8, 8]} />
+          <meshBasicMaterial color="#ffffff" />
+        </mesh>
+        {/* Body */}
+        <mesh position={[0, 1.2, 0]}>
+          <boxGeometry args={[1.5, 1.8, 0.8]} />
+          <meshStandardMaterial color="#00ffff" wireframe />
+        </mesh>
+        {/* Arms */}
+        <mesh position={[1, 1.5, 0]}>
+          <boxGeometry args={[0.4, 1.2, 0.4]} />
+          <meshStandardMaterial color="#00ffff" wireframe />
+        </mesh>
+        <mesh position={[-1, 1.5, 0]}>
+          <boxGeometry args={[0.4, 1.2, 0.4]} />
+          <meshStandardMaterial color="#00ffff" wireframe />
+        </mesh>
+        {/* Glowing Base */}
+        <mesh position={[0, 0, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+          <ringGeometry args={[0.5, 0.8, 32]} />
+          <meshBasicMaterial color="#00ffff" transparent opacity={0.5} side={THREE.DoubleSide} />
+        </mesh>
+      </group>
+    </group>
   );
 }
 
@@ -275,7 +293,7 @@ function Scene({ onNodeClick }: NetworkSceneProps) {
       </group>
 
       <Suspense fallback={null}>
-        <Character position={new THREE.Vector3(0, -1.5, 0)} targetPosition={characterTarget} />
+        <Character targetPosition={characterTarget} />
       </Suspense>
 
       <EffectComposer disableNormalPass>
