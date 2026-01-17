@@ -23,10 +23,10 @@ interface NetworkSceneProps {
 // Node data structure
 const NODES = [
   { id: "profile", label: "PROFILE", position: [0, 0, 0], color: "#00ffff", size: 1.5 },
-  { id: "experience", label: "EXP_LOGS", position: [-4, 2, -2], color: "#bd00ff", size: 1 },
+  { id: "experience", label: "MISSION_LOGS", position: [-4, 2, -2], color: "#bd00ff", size: 1 },
   { id: "skills", label: "ARSENAL", position: [4, 1, -2], color: "#00ff00", size: 1 },
   { id: "achievements", label: "HALL_OF_FAME", position: [-3, -3, 2], color: "#eab308", size: 1 },
-  { id: "contact", label: "UPLINK", position: [3, -2, 3], color: "#ef4444", size: 1 },
+  { id: "contact", label: "SECURE_UPLINK", position: [3, -2, 3], color: "#ef4444", size: 1 },
 ] as const;
 
 // Calculate connections (Star topology: all connect to center)

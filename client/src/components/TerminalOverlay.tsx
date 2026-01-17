@@ -85,37 +85,43 @@ function ProfileContent() {
            <ShieldCheck className="w-10 h-10 text-primary" />
         </div>
         <div>
-          <h1 className="text-3xl font-display text-primary font-bold">DEEPAK DHIMAN</h1>
+          <h1 className="text-3xl font-display text-primary font-bold tracking-tighter">DEEPAK DHIMAN</h1>
           <p className="text-xl text-primary/80 font-mono mt-1">Application Security Engineer</p>
         </div>
       </div>
 
       <div className="space-y-4 font-mono">
         <p className="typing-effect">
-          <span className="text-accent">{">"}</span> Security Professional with 5+ years of experience in Offensive Security.
+          <span className="text-accent">{">"}</span> Security researcher and application-security engineer with 5+ years of hands-on experience across web, API, mobile (Android/iOS) and microservice environments.
         </p>
         <p>
-          <span className="text-accent">{">"}</span> Specializing in Application Security, Secure SDLC implementation, and Threat Modeling.
+          <span className="text-accent">{">"}</span> Offensive-first testing, threat modeling and secure-SDLC practices to find and close real abuse paths in product flows (auth, payments, session management).
         </p>
         <p>
-          <span className="text-accent">{">"}</span> Proven track record in identifying critical vulnerabilities across diverse environments.
+          <span className="text-accent">{">"}</span> Comfortable embedding security into CI/CD, creating POCs and working directly with engineering teams to ship fixes.
         </p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-8">
         <div className="p-4 border border-primary/20 bg-primary/5 rounded">
-          <h3 className="text-primary font-bold mb-2">CORE FOCUS</h3>
-          <ul className="list-disc list-inside space-y-1 text-muted-foreground text-sm">
-            <li>Offensive-first Testing</li>
-            <li>Cloud Security (AWS)</li>
-            <li>DevSecOps Integration</li>
-            <li>Security Architecture Review</li>
-          </ul>
+          <h3 className="text-primary font-bold mb-2">EDUCATION</h3>
+          <div className="space-y-3">
+            <div>
+              <p className="text-foreground font-bold text-sm">B. Tech in Computer Science Engineering</p>
+              <p className="text-muted-foreground text-xs">Kurukshetra University | 08/2017 – 05/2020</p>
+              <p className="text-primary text-xs mt-1">Score: 79%</p>
+            </div>
+            <div>
+              <p className="text-foreground font-bold text-sm">Diploma in Computer Science Engineering</p>
+              <p className="text-muted-foreground text-xs">GBN Polytechnic | 08/2015 – 05/2017</p>
+              <p className="text-primary text-xs mt-1">Score: 80%</p>
+            </div>
+          </div>
         </div>
         <div className="p-4 border border-primary/20 bg-primary/5 rounded">
-          <h3 className="text-primary font-bold mb-2">OBJECTIVE</h3>
-          <p className="text-muted-foreground text-sm">
-            To leverage deep technical expertise in securing enterprise-grade applications and infrastructure against sophisticated cyber threats.
+          <h3 className="text-primary font-bold mb-2">EXECUTION STATEMENT</h3>
+          <p className="text-muted-foreground text-sm italic">
+            "I treat AppSec not as vulnerability listing but as a continuous mapping of how trust breaks in real product flows."
           </p>
         </div>
       </div>
@@ -127,50 +133,56 @@ function ExperienceContent() {
   const experiences = [
     {
       role: "Product Security Consultant",
-      company: "Emirates NBD (via Forward Defense)",
-      period: "2022 - Present",
+      company: "Emirates NBD via Forward Defense",
+      period: "02/2025 – Present",
       details: [
-        "Conducting black-box and gray-box penetration testing on banking applications.",
-        "Collaborating with DevOps to integrate security gates (SAST/DAST) in CI/CD pipelines.",
-        "Performing rigorous Threat Modeling sessions for new financial products.",
+        "Performed targeted security assessments for web, Android and iOS applications in microservice architectures.",
+        "Ran threat modeling sessions from feature ideation to architecture review and translated risks into developer-actionable remediation.",
+        "Embedded security checks into sprint cycles and CI/CD pipelines to enable shift-left testing.",
+        "Used Semgrep / Checkmarx / Burp Suite Pro for SAST/DAST and SCA for dependency/security supply-chain checks.",
+        "Monitored container runtimes and microservice behavior (Sysdig) to detect misconfigurations and runtime anomalies.",
+        "Built POCs and exploit chains for auth/payment/session abuse and worked with engineers until issues were fixed.",
+        "Reviewed design docs & feature proposals and flagged abuse cases before code was written.",
+        "Reverse engineered client-side logic to identify hidden trust assumptions and weak enforcement boundaries.",
+        "Created threat scenarios that modelled 'how a malicious actor would chain normal features into exploitation'."
       ]
     },
     {
       role: "Security Consultant",
       company: "Ampcus Cyber",
-      period: "2021 - 2022",
+      period: "02/2024 – 02/2025",
       details: [
-        "Led security assessments for fintech and healthcare clients.",
-        "Performed API security testing covering OWASP Top 10 API threats.",
-        "Automated vulnerability scanning workflows using Python scripting."
+        "Conducted web, API and mobile (Android/iOS) security engagements with emphasis on business-logic abuse.",
+        "Built automation scripts to remove repetitive manual steps and scale testing.",
+        "Led OSINT-driven attack-surface discovery, red-team simulations and social-engineering exercises."
       ]
     },
     {
       role: "Cyber Security Specialist",
       company: "Network Intelligence India",
-      period: "2019 - 2021",
+      period: "10/2021 – 12/2023",
       details: [
-        "Executed network and web application penetration tests.",
-        "Assisted in incident response activities and forensic analysis.",
-        "Delivered technical reports detailing remediation strategies for developers."
+        "Led VAPT for Web, Mobile & Infrastructure.",
+        "Performed Firewall & WiFi security reviews.",
+        "Led OSINT-driven attack-surface discovery and red-team simulations."
       ]
     }
   ];
 
   return (
     <div className="space-y-8">
-      <h2 className="text-2xl font-display text-secondary mb-6 border-b border-secondary/30 pb-2">
+      <h2 className="text-2xl font-display text-secondary mb-6 border-b border-secondary/30 pb-2 uppercase tracking-widest">
         MISSION_LOGS // EXPERIENCE
       </h2>
       
       <div className="relative border-l-2 border-secondary/20 ml-3 space-y-12">
         {experiences.map((exp, idx) => (
           <div key={idx} className="relative pl-8">
-            <div className="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-background border-2 border-secondary" />
+            <div className="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-black border-2 border-secondary" />
             
             <div className="flex flex-col sm:flex-row sm:items-baseline sm:justify-between mb-2">
-              <h3 className="text-lg font-bold text-foreground">{exp.role}</h3>
-              <span className="font-mono text-xs text-secondary bg-secondary/10 px-2 py-1 rounded">
+              <h3 className="text-lg font-bold text-foreground tracking-tight">{exp.role}</h3>
+              <span className="font-mono text-xs text-secondary bg-secondary/10 px-2 py-1 rounded shrink-0">
                 {exp.period}
               </span>
             </div>
@@ -180,8 +192,8 @@ function ExperienceContent() {
             <ul className="space-y-2">
               {exp.details.map((detail, i) => (
                 <li key={i} className="flex gap-3 text-sm text-muted-foreground">
-                  <span className="text-secondary mt-1">::</span>
-                  {detail}
+                  <span className="text-secondary mt-1 shrink-0">::</span>
+                  <span>{detail}</span>
                 </li>
               ))}
             </ul>
@@ -195,42 +207,46 @@ function ExperienceContent() {
 function SkillsContent() {
   const skillCategories = [
     {
-      name: "Offensive Security",
-      skills: ["Web Pentesting", "API Security", "Mobile App Security (iOS/Android)", "Network Pentesting", "Social Engineering"]
+      name: "Application Security & VAPT",
+      skills: ["Web", "API", "Mobile (Android/iOS)", "Thick Client", "AD", "Network"]
     },
     {
-      name: "Tools & Arsenal",
-      skills: ["Burp Suite Pro", "Metasploit", "Nmap", "Wireshark", "Frida", "Objection", "Sysdig", "Nessus"]
+      name: "DevSecOps & Tools",
+      skills: ["CI/CD Security", "Semgrep", "Checkmarx", "Burp Suite Pro", "Sysdig", "Trufflehog", "OWASP ZAP", "Kibana", "Red Panda"]
     },
     {
-      name: "DevSecOps & Cloud",
-      skills: ["AWS Security", "Docker/K8s Security", "CI/CD Security", "Terraform", "GitLab CI"]
+      name: "Red Teaming & OSINT",
+      skills: ["Phishing", "Social Engineering", "Attack Simulations", "OSINT Recon", "Asset Discovery"]
     },
     {
-      name: "Languages",
-      skills: ["Python", "Bash Scripting", "JavaScript", "Go (Basic)"]
+      name: "Specialized Testing",
+      skills: ["IoT Pentesting", "MIoT (Medical Devices)", "DICOM", "HL7", "FDA 501", "PACS", "Web LLM Attacks"]
+    },
+    {
+      name: "Standards & Config",
+      skills: ["OWASP Top 10", "NIST", "PCI-DSS", "MITRE ATT&CK", "Firewall/WAF Reviews", "IDS/IPS"]
     }
   ];
 
   return (
     <div className="space-y-8">
-      <h2 className="text-2xl font-display text-accent mb-6 border-b border-accent/30 pb-2">
-        SYSTEM_CAPABILITIES // SKILLS
+      <h2 className="text-2xl font-display text-accent mb-6 border-b border-accent/30 pb-2 uppercase tracking-widest">
+        SYSTEM_CAPABILITIES // ARSENAL
       </h2>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {skillCategories.map((category, idx) => (
           <div key={idx} className="bg-accent/5 border border-accent/20 p-5 rounded-lg hover:border-accent/50 transition-colors group">
             <div className="flex items-center gap-3 mb-4">
-              <Cpu className="w-5 h-5 text-accent group-hover:animate-spin" />
-              <h3 className="text-lg font-bold text-accent font-display">{category.name}</h3>
+              <Cpu className="w-5 h-5 text-accent group-hover:animate-pulse" />
+              <h3 className="text-lg font-bold text-accent font-display tracking-tight">{category.name}</h3>
             </div>
             
             <div className="flex flex-wrap gap-2">
               {category.skills.map((skill, sIdx) => (
                 <span 
                   key={sIdx} 
-                  className="px-2 py-1 bg-background border border-accent/30 text-accent/80 text-xs font-mono rounded hover:bg-accent hover:text-black transition-all cursor-default"
+                  className="px-2 py-1 bg-black border border-accent/30 text-accent/80 text-xs font-mono rounded hover:bg-accent hover:text-black transition-all cursor-default"
                 >
                   {skill}
                 </span>
@@ -246,62 +262,64 @@ function SkillsContent() {
 function AchievementsContent() {
   return (
     <div className="space-y-8">
-      <h2 className="text-2xl font-display text-yellow-500 mb-6 border-b border-yellow-500/30 pb-2">
+      <h2 className="text-2xl font-display text-yellow-500 mb-6 border-b border-yellow-500/30 pb-2 uppercase tracking-widest">
         HALL_OF_FAME // ACHIEVEMENTS
       </h2>
 
-      <div className="bg-gradient-to-r from-yellow-500/10 to-transparent p-6 rounded-lg border border-yellow-500/20 mb-8">
-        <div className="flex items-start gap-4">
-          <Trophy className="w-8 h-8 text-yellow-500 shrink-0" />
-          <div>
-            <h3 className="text-xl font-bold text-yellow-400 mb-2">Bug Bounty Hunter</h3>
-            <p className="text-muted-foreground text-sm leading-relaxed">
-              Recognized for responsible disclosure of critical vulnerabilities in major global organizations. 
-              Consistently ranked among top researchers on platforms like HackenProof.
-            </p>
+      <div className="grid grid-cols-1 gap-6">
+        <div className="bg-gradient-to-r from-yellow-500/10 to-transparent p-6 rounded-lg border border-yellow-500/20">
+          <div className="flex items-start gap-4">
+            <Trophy className="w-8 h-8 text-yellow-500 shrink-0" />
+            <div>
+              <h3 className="text-xl font-bold text-yellow-400 mb-2">Key Accomplishments</h3>
+              <ul className="space-y-3">
+                <li className="flex gap-2 text-muted-foreground">
+                  <span className="text-yellow-500">★</span>
+                  <span>200+ Hall of Fame mentions (Google, Dell, Blackboard, NCIIPC).</span>
+                </li>
+                <li className="flex gap-2 text-muted-foreground">
+                  <span className="text-yellow-500">★</span>
+                  <span>Top 10 Hackenproof researcher (2022).</span>
+                </li>
+                <li className="flex gap-2 text-muted-foreground">
+                  <span className="text-yellow-500">★</span>
+                  <span>Delivered Project Oman – manual Web/WiFi/Network Pentest in 20 days with client appreciation.</span>
+                </li>
+                <li className="flex gap-2 text-muted-foreground">
+                  <span className="text-yellow-500">★</span>
+                  <span>Building a corporate Banking product from scratch in current Organisation.</span>
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
-      </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="border border-yellow-500/20 p-4 rounded bg-black/40">
-          <h4 className="text-yellow-500 font-mono text-sm mb-3 border-b border-yellow-500/20 pb-2">
-            [ ACKNOWLEDGMENTS ]
-          </h4>
-          <ul className="space-y-2 text-sm text-foreground/80 font-mono">
-            <li className="flex items-center gap-2">
-              <span className="text-yellow-500">★</span> Google Hall of Fame
-            </li>
-            <li className="flex items-center gap-2">
-              <span className="text-yellow-500">★</span> Dell Security Acknowledgment
-            </li>
-            <li className="flex items-center gap-2">
-              <span className="text-yellow-500">★</span> Microsoft Security Researcher
-            </li>
-            <li className="flex items-center gap-2">
-              <span className="text-yellow-500">★</span> Sony Security Recognition
-            </li>
-            <li className="flex items-center gap-2">
-              <span className="text-yellow-500">★</span> 200+ Other Acknowledgments
-            </li>
-          </ul>
-        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="border border-yellow-500/20 p-4 rounded bg-black/40">
+            <h4 className="text-yellow-500 font-mono text-sm mb-3 border-b border-yellow-500/20 pb-2">
+              [ PUBLICATIONS & MEDIA ]
+            </h4>
+            <ul className="space-y-2 text-sm text-foreground/80 font-mono">
+              <li className="flex items-center gap-2">• Interview with XSSRAT (2023)</li>
+              <li className="flex items-center gap-2">• Security write-ups on Medium</li>
+              <li className="flex items-center gap-2">• Contributor to GitHub HowToHunt repo</li>
+              <li className="flex items-center gap-2">• YouTube (Virdoex) Bug Hunting</li>
+              <li className="flex items-center gap-2">• Podcast: The Cyber Explorers</li>
+            </ul>
+          </div>
 
-        <div className="border border-yellow-500/20 p-4 rounded bg-black/40">
-           <h4 className="text-yellow-500 font-mono text-sm mb-3 border-b border-yellow-500/20 pb-2">
-            [ CERTIFICATIONS ]
-          </h4>
-           <ul className="space-y-2 text-sm text-foreground/80 font-mono">
-            <li className="flex items-center gap-2">
-              <span className="text-yellow-500">♦</span> Certified Ethical Hacker (CEH)
-            </li>
-            <li className="flex items-center gap-2">
-              <span className="text-yellow-500">♦</span> Offensive Security Certified Professional (OSCP) - In Progress
-            </li>
-             <li className="flex items-center gap-2">
-              <span className="text-yellow-500">♦</span> AWS Certified Security - Specialty
-            </li>
-          </ul>
+          <div className="border border-yellow-500/20 p-4 rounded bg-black/40">
+            <h4 className="text-yellow-500 font-mono text-sm mb-3 border-b border-yellow-500/20 pb-2">
+              [ CERTIFICATIONS ]
+            </h4>
+            <ul className="space-y-2 text-sm text-foreground/80 font-mono">
+              <li className="flex items-center gap-2">• eWPTXv2 – Adv Web Pentesting</li>
+              <li className="flex items-center gap-2">• eCPPT v2 – Pentesting Prof</li>
+              <li className="flex items-center gap-2">• API Penetration Testing</li>
+              <li className="flex items-center gap-2">• Certified AppSec Practitioner</li>
+              <li className="flex items-center gap-2">• Threat Modeling Security Fundamentals</li>
+            </ul>
+          </div>
         </div>
       </div>
     </div>
@@ -327,7 +345,7 @@ function ContactContent() {
 
   return (
     <div className="space-y-8">
-      <h2 className="text-2xl font-display text-primary mb-6 border-b border-primary/30 pb-2">
+      <h2 className="text-2xl font-display text-primary mb-6 border-b border-primary/30 pb-2 uppercase tracking-widest">
         ESTABLISH_UPLINK // CONTACT
       </h2>
 
@@ -341,9 +359,11 @@ function ContactContent() {
           <div className="space-y-4">
              <div className="flex items-center gap-3 text-primary/80">
                 <Mail className="w-5 h-5" />
-                <span className="font-mono">deepak.dhiman@example.com</span>
+                <span className="font-mono">virdoexhunter@gmail.com</span>
              </div>
-             {/* Add more contact info here if needed */}
+             <div className="flex items-center gap-3 text-primary/80">
+                <span className="font-mono text-xs">LOC: Bellandur, Bengaluru 560103</span>
+             </div>
           </div>
         </div>
 
