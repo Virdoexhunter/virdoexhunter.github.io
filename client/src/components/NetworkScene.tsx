@@ -1,4 +1,4 @@
-import { useRef, useState, useMemo, Suspense, useEffect } from "react";
+import { useRef, useState, useMemo, Suspense, useEffect, useCallback } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { 
   OrbitControls, 
@@ -14,7 +14,6 @@ import {
   useGLTF
 } from "@react-three/drei";
 import * as THREE from "three";
-import { EffectComposer, Bloom, Noise, Vignette } from "@react-three/postprocessing";
 
 type SectionType = "profile" | "experience" | "skills" | "achievements" | "contact" | null;
 
@@ -24,11 +23,11 @@ interface NetworkSceneProps {
 
 // Node data structure (City-themed)
 const NODES = [
-  { id: "profile", label: "CENTRAL_CITY", position: [0, 0, 0], color: "#00ffff", size: 1.5 },
-  { id: "experience", label: "WORK_DISTRICT", position: [-8, 0, -8], color: "#bd00ff", size: 1 },
-  { id: "skills", label: "TECH_HUB", position: [8, 0, -8], color: "#00ff00", size: 1 },
-  { id: "achievements", label: "TROPHY_SQUARE", position: [-8, 0, 8], color: "#eab308", size: 1 },
-  { id: "contact", label: "COMM_PORT", position: [8, 0, 8], color: "#ef4444", size: 1 },
+  { id: "profile", label: "CENTRAL_CITY", position: [0, 0, 0] as [number, number, number], color: "#00ffff", size: 1.5 },
+  { id: "experience", label: "WORK_DISTRICT", position: [-8, 0, -8] as [number, number, number], color: "#bd00ff", size: 1 },
+  { id: "skills", label: "TECH_HUB", position: [8, 0, -8] as [number, number, number], color: "#00ff00", size: 1 },
+  { id: "achievements", label: "TROPHY_SQUARE", position: [-8, 0, 8] as [number, number, number], color: "#eab308", size: 1 },
+  { id: "contact", label: "COMM_PORT", position: [8, 0, 8] as [number, number, number], color: "#ef4444", size: 1 },
 ] as const;
 
 // Calculate connections (Street paths)
@@ -59,7 +58,7 @@ function Character({ targetPosition }: { targetPosition: THREE.Vector3 }) {
         {/* Head */}
         <mesh position={[0, 2.5, 0]}>
           <boxGeometry args={[1, 1, 1]} />
-          <meshStandardMaterial color="#00ffff" emissive="#00ffff" emissiveIntensity={1} wireframe />
+          <meshStandardMaterial color="#00ffff" wireframe />
         </mesh>
         {/* Eyes */}
         <mesh position={[0.2, 2.6, 0.5]}>
@@ -118,8 +117,6 @@ function Node({ position, color, size, label, onClick, isHovered, isActive, onPo
           <meshStandardMaterial 
             color={color} 
             wireframe={true}
-            emissive={color}
-            emissiveIntensity={isHovered || isActive ? 4 : 1.5}
             transparent
             opacity={0.9}
           />
@@ -158,7 +155,7 @@ function Connection({ start, end, color }: { start: [number, number, number], en
   const curve = useMemo(() => new THREE.LineCurve3(
     new THREE.Vector3(...start), 
     new THREE.Vector3(...end)
-  ), [start, end]);
+  ), [start[0], start[1], start[2], end[0], end[1], end[2]]);
 
   return (
     <>
@@ -189,7 +186,7 @@ function DataPacket({ curve, color }: { curve: THREE.LineCurve3, color: string }
   return (
     <mesh ref={meshRef}>
       <sphereGeometry args={[0.1, 8, 8]} />
-      <meshBasicMaterial color={color} emissive={color} emissiveIntensity={2} />
+      <meshBasicMaterial color={color} />
     </mesh>
   );
 }
@@ -223,11 +220,13 @@ function Scene({ onNodeClick }: NetworkSceneProps) {
     setCharacterTarget(new THREE.Vector3(position[0] + 2, -1.5, position[2] + 2));
     
     // Street-view style zoom
-    cameraControlsRef.current?.setLookAt(
-      position[0] + 8, position[1] + 4, position[2] + 12,
-      position[0], position[1], position[2],
-      true
-    );
+    if (cameraControlsRef.current) {
+      cameraControlsRef.current.setLookAt(
+        position[0] + 8, position[1] + 4, position[2] + 12,
+        position[0], position[1], position[2],
+        true
+      );
+    }
     onNodeClick(id as SectionType);
   };
 
