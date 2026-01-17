@@ -1,4 +1,4 @@
-import { useRef, useState, useMemo, Suspense } from "react";
+import { useRef, useState, useMemo, Suspense, useEffect } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { 
   OrbitControls, 
@@ -9,7 +9,9 @@ import {
   Html,
   Sphere,
   PerspectiveCamera,
-  CameraControls
+  CameraControls,
+  useAnimations,
+  useGLTF
 } from "@react-three/drei";
 import * as THREE from "three";
 import { EffectComposer, Bloom, Noise, Vignette } from "@react-three/postprocessing";
@@ -23,10 +25,10 @@ interface NetworkSceneProps {
 // Node data structure (City-themed)
 const NODES = [
   { id: "profile", label: "CENTRAL_CITY", position: [0, 0, 0], color: "#00ffff", size: 1.5 },
-  { id: "experience", label: "WORK_DISTRICT", position: [-4, 0, -5], color: "#bd00ff", size: 1 },
-  { id: "skills", label: "TECH_HUB", position: [4, 0, -5], color: "#00ff00", size: 1 },
-  { id: "achievements", label: "TROPHY_SQUARE", position: [-5, 0, 4], color: "#eab308", size: 1 },
-  { id: "contact", label: "COMM_PORT", position: [5, 0, 4], color: "#ef4444", size: 1 },
+  { id: "experience", label: "WORK_DISTRICT", position: [-8, 0, -8], color: "#bd00ff", size: 1 },
+  { id: "skills", label: "TECH_HUB", position: [8, 0, -8], color: "#00ff00", size: 1 },
+  { id: "achievements", label: "TROPHY_SQUARE", position: [-8, 0, 8], color: "#eab308", size: 1 },
+  { id: "contact", label: "COMM_PORT", position: [8, 0, 8], color: "#ef4444", size: 1 },
 ] as const;
 
 // Calculate connections (Street paths)
@@ -36,14 +38,50 @@ const CONNECTIONS = NODES.slice(1).map(node => ({
   color: node.color
 }));
 
+function Character({ position, targetPosition }: { position: THREE.Vector3, targetPosition: THREE.Vector3 }) {
+  const group = useRef<THREE.Group>(null);
+  
+  // Using a generic robot/anime character placeholder model from a reliable CDN
+  const { scene, animations } = useGLTF("https://vazxmixjsiawhamofees.supabase.co/storage/v1/object/public/models/robot-parts-variation/model.gltf");
+  const { actions } = useAnimations(animations, group);
+
+  useEffect(() => {
+    if (actions && actions["Walking"]) {
+      actions["Walking"].play();
+    }
+  }, [actions]);
+
+  useFrame((state, delta) => {
+    if (group.current) {
+      // Smoothly move towards target position
+      group.current.position.lerp(targetPosition, 0.05);
+      
+      // Look at the target
+      const lookTarget = targetPosition.clone();
+      lookTarget.y = group.current.position.y;
+      group.current.lookAt(lookTarget);
+      
+      // Floating animation
+      group.current.position.y += Math.sin(state.clock.getElapsedTime() * 2) * 0.005;
+    }
+  });
+
+  return (
+    <primitive 
+      ref={group}
+      object={scene} 
+      position={position} 
+      scale={[0.4, 0.4, 0.4]} 
+    />
+  );
+}
+
 function Node({ position, color, size, label, onClick, isHovered, isActive, onPointerOver, onPointerOut }: any) {
   const meshRef = useRef<THREE.Mesh>(null);
   
   useFrame((state) => {
     if (meshRef.current) {
       meshRef.current.rotation.y += 0.005;
-      // Hover lift effect instead of scale pulse for "street view" feel
-      const t = state.clock.getElapsedTime();
       const targetY = position[1] + (isHovered ? 0.5 : 0);
       meshRef.current.position.y = THREE.MathUtils.lerp(meshRef.current.position.y, targetY, 0.1);
     }
@@ -58,27 +96,25 @@ function Node({ position, color, size, label, onClick, isHovered, isActive, onPo
           onPointerOver={(e) => { e.stopPropagation(); onPointerOver(); }}
           onPointerOut={(e) => { e.stopPropagation(); onPointerOut(); }}
         >
-          {/* Building-like geometry */}
-          <boxGeometry args={[size * 1.2, size * 2.5, size * 1.2]} />
+          <boxGeometry args={[size * 1.5, size * 3, size * 1.5]} />
           <meshStandardMaterial 
             color={color} 
             wireframe={true}
             emissive={color}
-            emissiveIntensity={isHovered || isActive ? 3 : 1}
+            emissiveIntensity={isHovered || isActive ? 4 : 1.5}
             transparent
             opacity={0.9}
           />
         </mesh>
         
-        {/* Foundation/Base */}
-        <mesh position={[0, -size * 1.25, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-           <planeGeometry args={[size * 2, size * 2]} />
-           <meshBasicMaterial color={color} transparent opacity={0.2} side={THREE.DoubleSide} />
+        <mesh position={[0, -size * 1.5, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+           <planeGeometry args={[size * 3, size * 3]} />
+           <meshBasicMaterial color={color} transparent opacity={0.15} side={THREE.DoubleSide} />
         </mesh>
 
         <Text
-          position={[0, size * 1.5, 0]}
-          fontSize={0.5}
+          position={[0, size * 2, 0]}
+          fontSize={0.6}
           color={color}
           anchorX="center"
           anchorY="middle"
@@ -102,7 +138,6 @@ function Connections() {
 }
 
 function Connection({ start, end, color }: { start: [number, number, number], end: [number, number, number], color: string }) {
-  // Animate particles moving along lines
   const curve = useMemo(() => new THREE.LineCurve3(
     new THREE.Vector3(...start), 
     new THREE.Vector3(...end)
@@ -113,11 +148,10 @@ function Connection({ start, end, color }: { start: [number, number, number], en
       <Line
         points={[start, end]}
         color={color}
-        lineWidth={1}
+        lineWidth={2}
         transparent
-        opacity={0.3}
+        opacity={0.2}
       />
-      {/* Animated data packet */}
       <DataPacket curve={curve} color={color} />
     </>
   );
@@ -125,7 +159,7 @@ function Connection({ start, end, color }: { start: [number, number, number], en
 
 function DataPacket({ curve, color }: { curve: THREE.LineCurve3, color: string }) {
   const meshRef = useRef<THREE.Mesh>(null);
-  const [speed] = useState(() => Math.random() * 0.5 + 0.5);
+  const [speed] = useState(() => Math.random() * 0.3 + 0.2);
 
   useFrame((state) => {
     if (meshRef.current) {
@@ -137,53 +171,55 @@ function DataPacket({ curve, color }: { curve: THREE.LineCurve3, color: string }
 
   return (
     <mesh ref={meshRef}>
-      <sphereGeometry args={[0.08, 8, 8]} />
-      <meshBasicMaterial color={color} />
+      <sphereGeometry args={[0.1, 8, 8]} />
+      <meshBasicMaterial color={color} emissive={color} emissiveIntensity={2} />
     </mesh>
   );
 }
 
 function Scene({ onNodeClick }: NetworkSceneProps) {
   const [hoveredNode, setHoveredNode] = useState<string | null>(null);
+  const [characterTarget, setCharacterTarget] = useState<THREE.Vector3>(new THREE.Vector3(0, -1.5, 0));
   const cameraControlsRef = useRef<CameraControls>(null);
 
   const handleNodeClick = (id: string, position: number[]) => {
+    // Move character to the node
+    setCharacterTarget(new THREE.Vector3(position[0] + 2, -1.5, position[2] + 2));
+    
     // Street-view style zoom
     cameraControlsRef.current?.setLookAt(
-      position[0] + 5, position[1] + 2, position[2] + 5, // Camera position
-      position[0], position[1], position[2], // Target position
-      true // Animate
+      position[0] + 8, position[1] + 4, position[2] + 12,
+      position[0], position[1], position[2],
+      true
     );
     onNodeClick(id as SectionType);
   };
 
   return (
     <>
-      <PerspectiveCamera makeDefault position={[15, 10, 15]} fov={50} />
+      <PerspectiveCamera makeDefault position={[20, 15, 20]} fov={50} />
       <CameraControls 
         ref={cameraControlsRef} 
-        minDistance={2} 
-        maxDistance={40}
-        minPolarAngle={0}
-        maxPolarAngle={Math.PI / 2.1} // Keep camera above the "ground"
+        minDistance={5} 
+        maxDistance={50}
+        maxPolarAngle={Math.PI / 2.1}
       />
 
-      <ambientLight intensity={0.4} />
-      <pointLight position={[20, 20, 20]} intensity={1.5} color="#00ffff" />
+      <ambientLight intensity={0.6} />
+      <pointLight position={[20, 20, 20]} intensity={2} color="#00ffff" />
+      <spotLight position={[-10, 20, -10]} intensity={1} color="#bd00ff" />
       
-      {/* Ground Plane for Street View Feel */}
-      <gridHelper args={[100, 50, "#111", "#222"]} position={[0, -2, 0]} />
+      <gridHelper args={[200, 40, "#222", "#111"]} position={[0, -2, 0]} />
       
-      <Stars radius={150} depth={50} count={3000} factor={4} saturation={0} fade speed={0.5} />
+      <Stars radius={200} depth={50} count={2000} factor={4} saturation={0} fade speed={0.5} />
       
-      {/* Network Group */}
       <group>
         {NODES.map((node) => (
           <Node
             key={node.id}
             {...node}
             isHovered={hoveredNode === node.id}
-            onClick={() => handleNodeClick(node.id, node.position as number[])}
+            onClick={() => handleNodeClick(node.id, [...node.position])}
             onPointerOver={() => {
               setHoveredNode(node.id);
               document.body.style.cursor = 'pointer';
@@ -197,10 +233,14 @@ function Scene({ onNodeClick }: NetworkSceneProps) {
         <Connections />
       </group>
 
+      <Suspense fallback={null}>
+        <Character position={new THREE.Vector3(0, -1.5, 0)} targetPosition={characterTarget} />
+      </Suspense>
+
       <EffectComposer disableNormalPass>
-        <Bloom luminanceThreshold={0.2} luminanceSmoothing={0.9} height={300} intensity={1.5} />
-        <Noise opacity={0.05} />
-        <Vignette eskil={false} offset={0.1} darkness={1.1} />
+        <Bloom luminanceThreshold={0.1} luminanceSmoothing={0.9} height={300} intensity={2} />
+        <Noise opacity={0.03} />
+        <Vignette eskil={false} offset={0.1} darkness={1.2} />
       </EffectComposer>
     </>
   );
@@ -209,8 +249,12 @@ function Scene({ onNodeClick }: NetworkSceneProps) {
 export function NetworkScene(props: NetworkSceneProps) {
   return (
     <div className="w-full h-screen bg-black">
-      <Canvas dpr={[1, 2]} gl={{ antialias: true }}>
-        <Suspense fallback={null}>
+      <Canvas dpr={[1, 2]} gl={{ antialias: true, alpha: true }}>
+        <Suspense fallback={
+          <Html center>
+            <div className="text-primary font-mono animate-pulse text-xl">LOADING_SYSTEM...</div>
+          </Html>
+        }>
           <Scene {...props} />
         </Suspense>
       </Canvas>
