@@ -1,4 +1,4 @@
-import { useRef, useState, useMemo } from "react";
+import { useRef, useState, useMemo, Suspense } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { 
   OrbitControls, 
@@ -36,7 +36,7 @@ const CONNECTIONS = NODES.slice(1).map(node => ({
   color: node.color
 }));
 
-function Node({ position, color, size, label, onClick, isHovered, isActive }: any) {
+function Node({ position, color, size, label, onClick, isHovered, isActive, onPointerOver, onPointerOut }: any) {
   const meshRef = useRef<THREE.Mesh>(null);
   
   useFrame((state) => {
@@ -56,8 +56,8 @@ function Node({ position, color, size, label, onClick, isHovered, isActive }: an
         <mesh 
           ref={meshRef} 
           onClick={(e) => { e.stopPropagation(); onClick(); }}
-          onPointerOver={() => document.body.style.cursor = 'pointer'}
-          onPointerOut={() => document.body.style.cursor = 'auto'}
+          onPointerOver={(e) => { e.stopPropagation(); onPointerOver(); }}
+          onPointerOut={(e) => { e.stopPropagation(); onPointerOut(); }}
         >
           <icosahedronGeometry args={[1, 1]} />
           <meshStandardMaterial 
@@ -80,7 +80,6 @@ function Node({ position, color, size, label, onClick, isHovered, isActive }: an
           position={[0, -size - 0.5, 0]}
           fontSize={0.4}
           color={color}
-          font="https://fonts.gstatic.com/s/rajdhani/v15/L10xAzT22cOpYlOQYxJc.woff" // Rajdhani Font URL (Fallback or use local if possible, using standard google font URL for example)
           anchorX="center"
           anchorY="middle"
         >
@@ -95,13 +94,13 @@ function Connections() {
   return (
     <group>
       {CONNECTIONS.map((conn, idx) => (
-        <Connection key={idx} start={conn.start} end={conn.end} color={conn.color} />
+        <Connection key={idx} start={conn.start as [number, number, number]} end={conn.end as [number, number, number]} color={conn.color} />
       ))}
     </group>
   );
 }
 
-function Connection({ start, end, color }: { start: number[], end: number[], color: string }) {
+function Connection({ start, end, color }: { start: [number, number, number], end: [number, number, number], color: string }) {
   // Animate particles moving along lines
   const curve = useMemo(() => new THREE.LineCurve3(
     new THREE.Vector3(...start), 
@@ -164,7 +163,6 @@ function Scene({ onNodeClick }: NetworkSceneProps) {
         ref={cameraControlsRef} 
         minDistance={5} 
         maxDistance={30} 
-        polarAngle={Math.PI / 2} // Restrict vertical movement for better UX
       />
 
       <ambientLight intensity={0.5} />
@@ -180,15 +178,21 @@ function Scene({ onNodeClick }: NetworkSceneProps) {
             {...node}
             isHovered={hoveredNode === node.id}
             onClick={() => handleNodeClick(node.id, node.position as number[])}
-            onPointerOver={() => setHoveredNode(node.id)}
-            onPointerOut={() => setHoveredNode(null)}
+            onPointerOver={() => {
+              setHoveredNode(node.id);
+              document.body.style.cursor = 'pointer';
+            }}
+            onPointerOut={() => {
+              setHoveredNode(null);
+              document.body.style.cursor = 'auto';
+            }}
           />
         ))}
         <Connections />
       </group>
 
       <EffectComposer disableNormalPass>
-        <Bloom luminanceThreshold={0} luminanceSmoothing={0.9} height={300} intensity={0.5} />
+        <Bloom luminanceThreshold={0.2} luminanceSmoothing={0.9} height={300} intensity={1.5} />
         <Noise opacity={0.05} />
         <Vignette eskil={false} offset={0.1} darkness={1.1} />
       </EffectComposer>
@@ -198,9 +202,11 @@ function Scene({ onNodeClick }: NetworkSceneProps) {
 
 export function NetworkScene(props: NetworkSceneProps) {
   return (
-    <div className="w-full h-screen bg-background">
-      <Canvas dpr={[1, 2]}>
-        <Scene {...props} />
+    <div className="w-full h-screen bg-black">
+      <Canvas dpr={[1, 2]} gl={{ antialias: true }}>
+        <Suspense fallback={null}>
+          <Scene {...props} />
+        </Suspense>
       </Canvas>
     </div>
   );
